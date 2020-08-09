@@ -65,6 +65,19 @@ CONTAINER ID        IMAGE                COMMAND                  CREATED       
 Used kops for kubernetes cluster since I have experience with AWS and Kops is the clustering type which works on AWS.
 
 First installed Kops and kubectl to create cluster and respective nodes for deployment.\
+
+KOPS Installation:
+
+curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64\
+chmod +x kops-linux-amd64\
+sudo mv kops-linux-amd64 /usr/local/bin/kops
+
+Kubectl Installation :
+
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"\
+chmod +x ./kubectl\
+sudo mv ./kubectl /usr/local/bin/kubectl
+
 Below is the output of creation of cluster using kops command.\
 
 kops create cluster --yes --state=s3://kops-storage-12908 --zones=ap-southeast-1a,ap-southeast-1b --node-count=2 --node-size=t2.micro --master-size=t2.medium --name=test1.k8s.local
@@ -108,22 +121,22 @@ $ kops get clusters\
 NAME            CLOUD   ZONES\
 test1.k8s.local aws     ap-southeast-1a,ap-southeast-1b
 
-# Ran manifest file with Imperative command
+# Created Kubernetes object deploymemt for the manifest file with Imperative command
 
-kubectl create deployment nodejs-app --image=shivaji1/nodejsapp:latest
+kubectl create deployment nodejs-deployment --image=shivaji1/nodejsapp:latest
 
 # Exposed the deployment with type Load Balancer to port 80 so that it can be accessed.
 
-kubectl expose deployment nodejs-app --type="LoadBalancer" --port=80
+kubectl expose deployment nodejs-deployment --type="LoadBalancer" --port=80 --target-port 8080
 
-kubectl run nodejs-asmt.yml { for pods }
+kubectl run nodejs-deployment --image=shivaji1/nodejsapp:latest --port=80 --expose { for pods }
 
 # Autoscaling for the deployment with cpu 50% and maximum of 10 replicas, ensuring at least 7 replicas are running at all times :
 
-kubectl autoscale deployment nodejs-app --cpu-percent=50 --min=7 --max=10
+kubectl autoscale deployment nodejs-deployment --cpu-percent=50 --min=7 --max=10
 
 
-
+# Thank you !!!!
 
 
 
