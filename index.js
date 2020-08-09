@@ -20,3 +20,4 @@ res.send("Update User");
 app.get("/insert", (req, res) => {
 res.send("Insert User");
 });
+
