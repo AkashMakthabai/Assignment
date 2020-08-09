@@ -23,7 +23,7 @@ docker build -t nodejs .\
 
 docker build -t nodejs .\
 Sending build context to Docker daemon 79.87 kB\
-Step 1/7 : FROM node:13\
+Step 1/7 : FROM node\
  ---> 2b9604a36e49\
 Step 2/7 : WORKDIR /app\
  ---> Using cache\
