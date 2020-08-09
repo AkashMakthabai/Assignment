@@ -108,19 +108,19 @@ $ kops get clusters\
 NAME            CLOUD   ZONES\
 test1.k8s.local aws     ap-southeast-1a,ap-southeast-1b
 
-# Ran manifest file with Declarative object configuration
+# Ran manifest file with Imperative command
 
-kubectl apply -f nodejs-asmt.yml
+kubectl create deployment nodejs-app --image=shivaji1/nodejsapp:latest
 
 # Exposed the deployment with type Load Balancer to port 80 so that it can be accessed.
 
-kubectl expose deployment nodejs-asmt --type="LoadBalancer" --port=80
+kubectl expose deployment nodejs-app --type="LoadBalancer" --port=80
 
 kubectl run nodejs-asmt.yml { for pods }
 
 # Autoscaling for the deployment with cpu 50% and maximum of 10 replicas, ensuring at least 7 replicas are running at all times :
 
-kubectl autoscale deployment nodejs-asmt --cpu-percent=50 --min=7 --max=10
+kubectl autoscale deployment nodejs-app --cpu-percent=50 --min=7 --max=10
 
 
 
