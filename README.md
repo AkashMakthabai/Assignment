@@ -51,6 +51,8 @@ Successfully built 63828eb39179\
 docker tag nodejs:latest 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 docker push 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 
+# Docker containers\
+
 docker run -dt --name node_js -p 3000:3000 shivaji1/nodejsapp\
 23e7aff0e3276f4b66fa991c73091237a00834982cf13d10aa8bad821c1bb34c\
 
