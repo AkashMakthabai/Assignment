@@ -33,3 +33,4 @@ containers:
   image: shivaji1/nodejsapp:latest
 ports:
 - containerPort: 3000
+
