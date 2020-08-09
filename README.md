@@ -47,7 +47,6 @@ Step 7/7 : EXPOSE 3000\
 Removing intermediate container fd4ba9f7138e\
 Successfully built 63828eb39179\
 
-
 docker tag nodejs:latest 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 docker push 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 
@@ -58,8 +57,75 @@ docker run -dt --name node_js -p 3000:3000 shivaji1/nodejsapp\
 
 docker ps\
 CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                             NAMES\
-23e7aff0e327        shivaji1/nodejsapp   "docker-entrypoint..."   6 seconds ago       Up 5 seconds        0.0.0.0:3000->3000/tcp            node_js
+23e7aff0e327        shivaji1/nodejsapp   "docker-entrypoint..."   6 seconds ago       Up 5 seconds        0.0.0.0:3000->3000/tcp            node_js\
 0ce369fd0fdd        nodejs               "docker-entrypoint..."   8 minutes ago       Up 8 minutes        3000/tcp, 0.0.0.0:32768->80/tcp   node-js
+
+# KOPS for Kubernetes Clustering
+
+Used kops for kubernetes cluster since I have experience with AWS and Kops is the clustering type which works on AWS.
+
+First installed Kops and kubectl to create cluster and respective nodes for deployment.\
+Below is the output of creation of cluster using kops command.\
+
+kops create cluster --yes --state=s3://kops-storage-12908 --zones=ap-southeast-1a,ap-southeast-1b --node-count=2 --node-size=t2.micro --master-size=t2.medium --name=test1.k8s.local
+
+I0809 13:44:58.024037    2155 create_cluster.go:557] Inferred --cloud=aws from zone "ap-southeast-1a"\
+I0809 13:44:58.084518    2155 subnets.go:184] Assigned CIDR 172.20.32.0/19 to subnet ap-southeast-1a\
+I0809 13:44:58.084539    2155 subnets.go:184] Assigned CIDR 172.20.64.0/19 to subnet ap-southeast-1b\
+I0809 13:44:58.334533    2155 create_cluster.go:1547] Using SSH public key: /home/centos/.ssh/id_rsa.pub\
+I0809 13:45:01.448881    2155 apply_cluster.go:545] Gossip DNS: skipping DNS validation\
+I0809 13:45:01.743950    2155 executor.go:103] Tasks: 0 done / 94 total; 42 can run\
+I0809 13:45:02.612136    2155 vfs_castore.go:590] Issuing new certificate: "etcd-manager-ca-events"\
+I0809 13:45:02.873224    2155 vfs_castore.go:590] Issuing new certificate: "apiserver-aggregator-ca"\
+I0809 13:45:03.456451    2155 vfs_castore.go:590] Issuing new certificate: "ca"\
+I0809 13:45:03.601438    2155 vfs_castore.go:590] Issuing new certificate: "etcd-peers-ca-main"\
+I0809 13:45:03.625744    2155 vfs_castore.go:590] Issuing new certificate: "etcd-peers-ca-events"\
+I0809 13:45:03.881506    2155 vfs_castore.go:590] Issuing new certificate: "etcd-manager-ca-main"\
+I0809 13:45:04.249486    2155 vfs_castore.go:590] Issuing new certificate: "etcd-clients-ca"\
+I0809 13:45:04.409010    2155 executor.go:103] Tasks: 42 done / 94 total; 27 can run\
+I0809 13:45:05.441940    2155 vfs_castore.go:590] Issuing new certificate: "apiserver-proxy-client"\
+I0809 13:45:05.803181    2155 vfs_castore.go:590] Issuing new certificate: "kube-proxy"\
+I0809 13:45:06.014391    2155 vfs_castore.go:590] Issuing new certificate: "apiserver-aggregator"\
+I0809 13:45:06.420738    2155 vfs_castore.go:590] Issuing new certificate: "kube-controller-manager"\
+I0809 13:45:06.569812    2155 vfs_castore.go:590] Issuing new certificate: "kubelet"\
+I0809 13:45:06.641665    2155 vfs_castore.go:590] Issuing new certificate: "kubecfg"\
+I0809 13:45:06.795897    2155 vfs_castore.go:590] Issuing new certificate: "kops"\
+I0809 13:45:06.957105    2155 vfs_castore.go:590] Issuing new certificate: "kube-scheduler"\
+I0809 13:45:07.055414    2155 vfs_castore.go:590] Issuing new certificate: "kubelet-api"\
+I0809 13:45:07.188240    2155 executor.go:103] Tasks: 69 done / 94 total; 21 can run\
+I0809 13:45:07.395724    2155 launchconfiguration.go:375] waiting for IAM instance profile "nodes.test1.k8s.local" to be ready\
+I0809 13:45:07.401345    2155 launchconfiguration.go:375] waiting for IAM instance profile "masters.test1.k8s.local" to be ready\
+I0809 13:45:17.755591    2155 executor.go:103] Tasks: 90 done / 94 total; 3 can run\
+I0809 13:45:18.109407    2155 vfs_castore.go:590] Issuing new certificate: "master"\
+I0809 13:45:18.407206    2155 executor.go:103] Tasks: 93 done / 94 total; 1 can run\
+I0809 13:45:18.690782    2155 executor.go:103] Tasks: 94 done / 94 total; 0 can run\
+I0809 13:45:18.759915    2155 update_cluster.go:308] Exporting kubecfg for cluster\
+kops has set your kubectl context to test1.k8s.local
+
+Cluster is starting.  It should be ready in a few minutes.
+
+$ kops get clusters\
+NAME            CLOUD   ZONES\
+test1.k8s.local aws     ap-southeast-1a,ap-southeast-1b
+
+# Ran manifest file with Declarative object configuration
+
+kubectl apply -f nodejs-asmt.yml
+
+# Exposed the deployment with type Load Balancer to port 80 so that it can be accessed.
+
+kubectl expose deployment nodejs-asmt --type="LoadBalancer" --port=80
+
+kubectl run nodejs-asmt.yml { for pods }
+
+# Autoscaling for the deployment with cpu 50% and maximum of 10 replicas, ensuring at least 7 replicas are running at all times :
+
+kubectl autoscale deployment nodejs-asmt --cpu-percent=50 --min=7 --max=10
+
+
+
+
+
 
 
 
