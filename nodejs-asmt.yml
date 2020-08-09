@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+name: nodejs-deployment
+spec:
+minReplicas: 7
+maxReplicas: 10
+metrics:
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: 60
+template:
+metadata:
+labels:
+app: nodejs
+spec:
+containers:
+- name: nodejsapp
+  image: shivaji1/nodejsapp:latest
+ports:
+- containerPort: 3000
