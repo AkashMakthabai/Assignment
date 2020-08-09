@@ -51,5 +51,9 @@ Successfully built 63828eb39179\
 docker tag nodejs:latest 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 docker push 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 
+docker ps\
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                             NAMES\
+0ce369fd0fdd        nodejs              "docker-entrypoint..."   2 minutes ago       Up 2 minutes        3000/tcp, 0.0.0.0:32768->80/tcp   node-js\
+
 
 
