@@ -16,7 +16,12 @@ To https://github.com/Akhilnagothu18/Assignment.git\
    db3c55a..2439a95  master -> master\
 Branch master set up to track remote branch master from origin.\
 
+# AWS ECR Login :
 
+aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com\
+docker build -t nodejs .\
+docker tag nodejs:latest 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
+docker push 724994165886.dkr.ecr.ap-southeast-1.amazonaws.com/nodejs:latest\
 
 
 
