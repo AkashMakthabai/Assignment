@@ -135,10 +135,13 @@ kubectl run nodejs-deployment --image=shivaji1/nodejsapp:latest --port=80 --expo
 
 kubectl autoscale deployment nodejs-deployment --cpu-percent=50 --min=7 --max=10
 
-
-
-
-
+.\
+.\
+.\
+.\
+.\
+.\
+.
 # Thank you !!!!
 
 
